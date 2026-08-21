@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createFileRoute } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +12,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "@/components/SectionHeading";
 import { toast } from "sonner";
+
+import { useSubmitContactForm } from "@/hooks/use-menu";
+import { ApiError } from "@/lib/api";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -37,7 +41,25 @@ export const Route = createFileRoute("/contact")({
           "Get in touch with ENSALADA. Visit us in Beirut, call for reservations, or send a message.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://ensalada-modern-menu.lovable.app/contact" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Contact — ENSALADA" },
+      {
+        name: "twitter:description",
+        content: "Visit ENSALADA in Beirut, call for reservations, or send us a message.",
+      },
+    ],
+    links: [{ rel: "canonical", href: "https://ensalada-modern-menu.lovable.app/contact" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Contact — ENSALADA",
+          url: "https://ensalada-modern-menu.lovable.app/contact",
+        }),
+      },
     ],
   }),
   component: ContactPage,
@@ -53,11 +75,20 @@ function ContactPage() {
     resolver: zodResolver(contactSchema),
   });
 
+  const submitContactForm = useSubmitContactForm();
+
   const onSubmit = async (data: ContactForm) => {
-    // Simulate sending a message — replace with a server function if needed.
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    toast.success(`Thanks, ${data.name}! We'll be in touch soon.`);
-    reset();
+    try {
+      await submitContactForm.mutateAsync({ ...data, phone: data.phone ?? "" });
+      toast.success(`Thanks, ${data.name}! We'll be in touch soon.`);
+      reset();
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 429) {
+        toast.error("Too many messages sent — please wait a minute and try again.");
+      } else {
+        toast.error("Something went wrong sending your message. Please try again.");
+      }
+    }
   };
 
   return (

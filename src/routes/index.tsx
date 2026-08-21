@@ -1,9 +1,10 @@
+/* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/SectionHeading";
 import { MenuCard } from "@/components/MenuCard";
-import { featuredItems } from "@/lib/menu-data";
+import { useFeaturedItems } from "@/hooks/use-menu";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,13 +24,57 @@ export const Route = createFileRoute("/")({
         content: "ENSALADA serves fresh, modern salads with seasonal ingredients and bold flavors.",
       },
       { property: "og:type", content: "website" },
+      {
+        property: "og:url",
+        content: "https://ensalada-modern-menu.lovable.app/",
+      },
+      {
+        property: "og:image",
+        content: "https://ensalada-modern-menu.lovable.app/images/hero-salad.jpg",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "ENSALADA — Fresh Salads, Made Modern" },
+      {
+        name: "twitter:description",
+        content: "Seasonal bowls, crisp greens, and bold dressings in the heart of Beirut.",
+      },
+      {
+        name: "twitter:image",
+        content: "https://ensalada-modern-menu.lovable.app/images/hero-salad.jpg",
+      },
+    ],
+    links: [{ rel: "canonical", href: "https://ensalada-modern-menu.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Restaurant",
+          name: "ENSALADA",
+          servesCuisine: "Salads",
+          url: "https://ensalada-modern-menu.lovable.app/",
+          image: "https://ensalada-modern-menu.lovable.app/images/hero-salad.jpg",
+          telephone: "+961 1 123 456",
+          email: "hello@ensalada.com",
+          priceRange: "$$",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "123 Green Leaf Avenue",
+            addressLocality: "Beirut",
+            addressCountry: "LB",
+          },
+          openingHours: ["Mo-Fr 10:00-21:00", "Sa-Su 11:00-22:00"],
+          hasMenu: "https://ensalada-modern-menu.lovable.app/menu",
+        }),
+      },
     ],
   }),
   component: HomePage,
 });
 
 function HomePage() {
+  const { data: featuredItems, isLoading } = useFeaturedItems();
+
   return (
     <main className="min-h-screen">
       {/* Hero */}
@@ -80,9 +125,20 @@ function HomePage() {
             description="Three bowls our guests come back for, again and again."
           />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredItems.map((item) => (
-              <MenuCard key={item.id} item={item} />
-            ))}
+            {isLoading
+              ? Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse overflow-hidden rounded-2xl border border-border"
+                >
+                  <div className="aspect-[4/3] bg-muted" />
+                  <div className="space-y-3 p-5">
+                    <div className="h-5 w-2/3 rounded bg-muted" />
+                    <div className="h-4 w-full rounded bg-muted" />
+                  </div>
+                </div>
+              ))
+              : featuredItems?.map((item) => <MenuCard key={item.id} item={item} />)}
           </div>
           <div className="mt-12 text-center">
             <Button asChild variant="outline" size="lg">
