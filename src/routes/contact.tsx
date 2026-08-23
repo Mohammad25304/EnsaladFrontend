@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Twitter } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "@/components/SectionHeading";
+import { SocialLinks } from "@/components/SocialLinks";
 import { toast } from "sonner";
 
-import { useSubmitContactForm } from "@/hooks/use-menu";
+import { useSiteSettings, useSocialLinks, useSubmitContactForm } from "@/hooks/use-menu";
 import { ApiError } from "@/lib/api";
 
 const contactSchema = z.object({
@@ -76,10 +77,18 @@ function ContactPage() {
   });
 
   const submitContactForm = useSubmitContactForm();
+  const { data: settings } = useSiteSettings();
+  const socialLinks = useSocialLinks();
+
+  const address = settings?.contact_address ?? "123 Green Leaf Avenue, Beirut, Lebanon";
+  const phone = settings?.contact_phone ?? "+961 1 123 456";
+  const email = settings?.contact_email ?? "hello@ensalada.com";
+  const hoursWeekday = settings?.hours_weekday ?? "Mon – Fri: 10am – 9pm";
+  const hoursWeekend = settings?.hours_weekend ?? "Sat – Sun: 11am – 10pm";
 
   const onSubmit = async (data: ContactForm) => {
     try {
-      await submitContactForm.mutateAsync({ ...data, phone: data.phone ?? "" });
+      await submitContactForm.mutateAsync(data);
       toast.success(`Thanks, ${data.name}! We'll be in touch soon.`);
       reset();
     } catch (error) {
@@ -160,11 +169,7 @@ function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-display font-semibold text-foreground">Location</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      123 Green Leaf Avenue
-                      <br />
-                      Beirut, Lebanon
-                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">{address}</p>
                   </div>
                 </div>
 
@@ -175,10 +180,10 @@ function ContactPage() {
                   <div>
                     <h3 className="font-display font-semibold text-foreground">Phone</h3>
                     <a
-                      href="tel:+96111234567"
+                      href={`tel:${phone.replace(/[^+\d]/g, "")}`}
                       className="mt-1 block text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
-                      +961 1 123 456
+                      {phone}
                     </a>
                   </div>
                 </div>
@@ -190,10 +195,10 @@ function ContactPage() {
                   <div>
                     <h3 className="font-display font-semibold text-foreground">Email</h3>
                     <a
-                      href="mailto:hello@ensalada.com"
+                      href={`mailto:${email}`}
                       className="mt-1 block text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
-                      hello@ensalada.com
+                      {email}
                     </a>
                   </div>
                 </div>
@@ -205,9 +210,9 @@ function ContactPage() {
                   <div>
                     <h3 className="font-display font-semibold text-foreground">Hours</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Mon – Fri: 10am – 9pm
+                      {hoursWeekday}
                       <br />
-                      Sat – Sun: 11am – 10pm
+                      {hoursWeekend}
                     </p>
                   </div>
                 </div>
@@ -221,35 +226,11 @@ function ContactPage() {
                   Stay updated on new bowls, seasonal specials, and behind-the-scenes from the
                   kitchen.
                 </p>
-                <div className="mt-5 flex gap-3">
-                  <a
-                    href="https://instagram.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Instagram"
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary"
-                  >
-                    <Instagram className="h-5 w-5" />
-                  </a>
-                  <a
-                    href="https://facebook.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Facebook"
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary"
-                  >
-                    <Facebook className="h-5 w-5" />
-                  </a>
-                  <a
-                    href="https://twitter.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Twitter"
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary"
-                  >
-                    <Twitter className="h-5 w-5" />
-                  </a>
-                </div>
+                <SocialLinks
+                  links={socialLinks}
+                  className="mt-5 flex gap-3"
+                  iconClassName="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary"
+                />
               </CardContent>
             </Card>
           </div>
@@ -257,4 +238,4 @@ function ContactPage() {
       </div>
     </main>
   );
-}
+} 

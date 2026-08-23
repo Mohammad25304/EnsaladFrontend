@@ -4,7 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/SectionHeading";
 import { MenuCard } from "@/components/MenuCard";
-import { useFeaturedItems } from "@/hooks/use-menu";
+import { useFeaturedItems, useSiteSettings } from "@/hooks/use-menu";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -74,6 +74,28 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { data: featuredItems, isLoading } = useFeaturedItems();
+  const { data: settings } = useSiteSettings();
+
+  // Fallbacks keep the page looking correct on first load, before the
+  // settings request resolves, or if a value hasn't been set yet in Filament.
+  const heroBadge = settings?.hero_badge ?? "Now Open in Beirut";
+  const heroTitle = settings?.hero_title ?? "Fresh Salads, Made Modern.";
+  const heroSubtitle =
+    settings?.hero_subtitle ??
+    "Seasonal bowls, crisp greens, and bold dressings — built for the way you eat today.";
+  const aboutTitle = settings?.about_title ?? "About ENSALADA";
+  const aboutBody1 =
+    settings?.about_body_1 ??
+    "ENSALADA was born from a simple belief: salad should never be boring. We combine farm-fresh produce, house-made dressings, and globally inspired flavors into bowls that are as nourishing as they are delicious.";
+  const aboutBody2 =
+    settings?.about_body_2 ??
+    "Every ingredient is chosen with care — from crisp local greens to ripe seasonal toppings — so every bite feels like a fresh start.";
+  const stat1Value = settings?.stat_1_value ?? "100%";
+  const stat1Label = settings?.stat_1_label ?? "Fresh Daily";
+  const stat2Value = settings?.stat_2_value ?? "20+";
+  const stat2Label = settings?.stat_2_label ?? "Signature Bowls";
+  const stat3Value = settings?.stat_3_value ?? "0";
+  const stat3Label = settings?.stat_3_label ?? "Boring Salads";
 
   return (
     <main className="min-h-screen">
@@ -94,15 +116,13 @@ function HomePage() {
         <div className="relative mx-auto flex min-h-[70vh] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl py-16">
             <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-              Now Open in Beirut
+              {heroBadge}
             </span>
             <h1 className="mt-5 text-5xl font-semibold leading-[1.1] text-foreground sm:text-6xl lg:text-7xl">
-              Fresh Salads,
-              <br />
-              <span className="text-primary">Made Modern.</span>
+              {heroTitle}
             </h1>
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
-              Seasonal bowls, crisp greens, and bold dressings — built for the way you eat today.
+              {heroSubtitle}
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Button asChild size="lg" className="min-w-[9rem]">
@@ -168,30 +188,33 @@ function HomePage() {
                 Our Story
               </span>
               <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
-                About ENSALADA
+                {aboutTitle}
               </h2>
               <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                ENSALADA was born from a simple belief: salad should never be boring. We combine
-                farm-fresh produce, house-made dressings, and globally inspired flavors into bowls
-                that are as nourishing as they are delicious.
+                {aboutBody1}
               </p>
               <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Every ingredient is chosen with care — from crisp local greens to ripe seasonal
-                toppings — so every bite feels like a fresh start.
+                {aboutBody2}
               </p>
 
               <div className="mt-10 grid grid-cols-3 gap-6">
                 <div className="text-center">
-                  <div className="font-display text-3xl font-semibold text-primary">100%</div>
-                  <div className="mt-1 text-sm text-muted-foreground">Fresh Daily</div>
+                  <div className="font-display text-3xl font-semibold text-primary">
+                    {stat1Value}
+                  </div>
+                  <div className="mt-1 text-sm text-muted-foreground">{stat1Label}</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-display text-3xl font-semibold text-primary">20+</div>
-                  <div className="mt-1 text-sm text-muted-foreground">Signature Bowls</div>
+                  <div className="font-display text-3xl font-semibold text-primary">
+                    {stat2Value}
+                  </div>
+                  <div className="mt-1 text-sm text-muted-foreground">{stat2Label}</div>
                 </div>
                 <div className="text-center">
-                  <div className="font-display text-3xl font-semibold text-primary">0</div>
-                  <div className="mt-1 text-sm text-muted-foreground">Boring Salads</div>
+                  <div className="font-display text-3xl font-semibold text-primary">
+                    {stat3Value}
+                  </div>
+                  <div className="mt-1 text-sm text-muted-foreground">{stat3Label}</div>
                 </div>
               </div>
             </div>
@@ -200,4 +223,4 @@ function HomePage() {
       </section>
     </main>
   );
-}
+} 

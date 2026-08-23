@@ -1,7 +1,20 @@
+/* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Twitter, Salad } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Salad } from "lucide-react";
+
+import { useSiteSettings, useSocialLinks } from "@/hooks/use-menu";
+import { SocialLinks } from "@/components/SocialLinks";
 
 export function Footer() {
+  const { data: settings } = useSiteSettings();
+  const socialLinks = useSocialLinks();
+
+  const address = settings?.contact_address ?? "123 Green Leaf Avenue, Beirut, Lebanon";
+  const phone = settings?.contact_phone ?? "+961 1 123 456";
+  const email = settings?.contact_email ?? "hello@ensalada.com";
+  const hoursWeekday = settings?.hours_weekday ?? "Mon – Fri: 10:00 AM – 9:00 PM";
+  const hoursWeekend = settings?.hours_weekend ?? "Sat – Sun: 11:00 AM – 10:00 PM";
+
   return (
     <footer className="border-t border-border bg-secondary/40">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -28,19 +41,11 @@ export function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>
-                  Mon – Fri
-                  <br />
-                  10:00 AM – 9:00 PM
-                </span>
+                <span>{hoursWeekday}</span>
               </li>
               <li className="flex items-start gap-3">
                 <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>
-                  Sat – Sun
-                  <br />
-                  11:00 AM – 10:00 PM
-                </span>
+                <span>{hoursWeekend}</span>
               </li>
             </ul>
           </div>
@@ -51,25 +56,21 @@ export function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>
-                  123 Green Leaf Avenue
-                  <br />
-                  Beirut, Lebanon
-                </span>
+                <span>{address}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <a href="tel:+96111234567" className="transition-colors hover:text-foreground">
-                  +961 1 123 456
+                <a
+                  href={`tel:${phone.replace(/[^+\d]/g, "")}`}
+                  className="transition-colors hover:text-foreground"
+                >
+                  {phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <a
-                  href="mailto:hello@ensalada.com"
-                  className="transition-colors hover:text-foreground"
-                >
-                  hello@ensalada.com
+                <a href={`mailto:${email}`} className="transition-colors hover:text-foreground">
+                  {email}
                 </a>
               </li>
             </ul>
@@ -78,35 +79,7 @@ export function Footer() {
           {/* Social */}
           <div>
             <h4 className="font-display text-base font-semibold text-foreground">Follow Us</h4>
-            <div className="mt-4 flex gap-3">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary hover:text-primary"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary hover:text-primary"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Twitter"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:border-primary hover:text-primary"
-              >
-                <Twitter className="h-4 w-4" />
-              </a>
-            </div>
+            <SocialLinks links={socialLinks} className="mt-4 flex gap-3" />
           </div>
         </div>
 
@@ -124,4 +97,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+} 
