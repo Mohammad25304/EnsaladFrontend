@@ -8,7 +8,7 @@ import type {
 
 // Set VITE_API_URL in your .env file, e.g. http://localhost:8000/api for local dev,
 // or https://api.yourdomain.com/api once deployed.
-const API_URL = import.meta.env["VITE_API_URL"] ?? "http://localhost:8000/api";
+const API_URL = import.meta.env["VITE_API_URL"] ?? "https://ensaladabackend-production.up.railway.app/";
 
 class ApiError extends Error {
     status: number;
