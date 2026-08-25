@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Menu, X, Salad } from "lucide-react";
+import { Menu, Salad } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
@@ -65,11 +65,7 @@ export function Header() {
             <div className="flex h-full flex-col">
               <div className="flex items-center justify-between">
                 <span className="font-display text-xl font-semibold text-foreground">ENSALADA</span>
-                <SheetClose asChild>
-                  <Button variant="ghost" size="icon" aria-label="Close menu">
-                    <X className="h-5 w-5" />
-                  </Button>
-                </SheetClose>
+
               </div>
               <nav className="mt-8 flex flex-col gap-2">
                 {navLinks.map((link) => (
