@@ -16,6 +16,7 @@ import { toast } from "sonner";
 
 import { useSiteSettings, useSocialLinks, useSubmitContactForm } from "@/hooks/use-menu";
 import { ApiError } from "@/lib/api";
+import { useRequireBranch } from "@/hooks/use-branch";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -77,8 +78,9 @@ function ContactPage() {
   });
 
   const submitContactForm = useSubmitContactForm();
-  const { data: settings } = useSiteSettings();
-  const socialLinks = useSocialLinks();
+  const { branchSlug } = useRequireBranch();
+  const { data: settings } = useSiteSettings(branchSlug);
+  const socialLinks = useSocialLinks(branchSlug);
 
   const address = settings?.contact_address ?? "123 Green Leaf Avenue, Beirut, Lebanon";
   const phone = settings?.contact_phone ?? "+961 1 123 456";

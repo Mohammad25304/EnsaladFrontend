@@ -6,6 +6,7 @@ import { MenuCard } from "@/components/MenuCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCategories, useMenuItems } from "@/hooks/use-menu";
 import type { ApiCategory } from "@/lib/api-types";
+import { useRequireBranch } from "@/hooks/use-branch";
 
 export const Route = createFileRoute("/menu")({
   head: () => ({
@@ -57,10 +58,11 @@ export const Route = createFileRoute("/menu")({
 });
 
 function MenuPage() {
-  const { data: categories, isLoading: categoriesLoading, isError: categoriesError } =
-    useCategories();
-  const { data: items, isLoading: itemsLoading } = useMenuItems();
+  const { branchSlug, isReady } = useRequireBranch();
 
+  const { data: categories, isLoading: categoriesLoading, isError: categoriesError } =
+    useCategories(branchSlug);
+  const { data: items, isLoading: itemsLoading } = useMenuItems(branchSlug);
   return (
     <main className="min-h-screen py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -71,7 +73,7 @@ function MenuPage() {
         />
 
         <div className="mt-12">
-          {categoriesLoading || itemsLoading ? (
+          {!isReady || categoriesLoading || itemsLoading ? (
             <MenuSkeleton />
           ) : categoriesError || !categories?.length ? (
             <p className="text-center text-muted-foreground">

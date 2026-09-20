@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -13,7 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Toaster } from "../components/ui/sonner";
-
+import { BranchProvider } from "../hooks/use-branch";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -140,14 +141,16 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <div className="flex-1">
-          <Outlet />
+      <BranchProvider>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <div className="flex-1">
+            <Outlet />
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-      <Toaster position="bottom-right" richColors />
+        <Toaster position="bottom-right" richColors />
+      </BranchProvider>
     </QueryClientProvider>
   );
 }

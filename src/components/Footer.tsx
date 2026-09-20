@@ -3,11 +3,13 @@ import { Link } from "@tanstack/react-router";
 import { MapPin, Phone, Mail, Clock, Salad } from "lucide-react";
 
 import { useSiteSettings, useSocialLinks } from "@/hooks/use-menu";
+import { useBranch } from "@/hooks/use-branch";
 import { SocialLinks } from "@/components/SocialLinks";
 
 export function Footer() {
-  const { data: settings } = useSiteSettings();
-  const socialLinks = useSocialLinks();
+  const { branchSlug } = useBranch();
+  const { data: settings } = useSiteSettings(branchSlug);
+  const socialLinks = useSocialLinks(branchSlug);
 
   const address = settings?.contact_address ?? "123 Green Leaf Avenue, Beirut, Lebanon";
   const phone = settings?.contact_phone ?? "+961 1 123 456";
@@ -21,7 +23,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/home" className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 <Salad className="h-5 w-5" />
               </div>
@@ -97,4 +99,4 @@ export function Footer() {
       </div>
     </footer>
   );
-} 
+}
