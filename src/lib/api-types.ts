@@ -115,3 +115,25 @@ export interface ContactFormPayload {
 export function pickLocale(value: Localized, locale: keyof Localized = "en"): string {
   return value[locale] ?? value.en;
 }
+// ── Chatbot (POST /api/chat, GET /api/chat/welcome) ──
+
+export type ChatAction =
+  | { kind: "link"; label: string; to: "/menu" | "/contact" | "/home" }
+  | { kind: "branch"; label: string; slug: string }
+  | { kind: "href"; label: string; href: string };
+
+/** The slimmed-down dish the chat card needs. */
+export type ChatItem = Pick<
+  ApiMenuItem,
+  "id" | "name" | "description" | "price" | "image" | "calories" | "protein_grams" | "is_featured" | "tags"
+>;
+
+export interface ChatReply {
+  text: string;
+  items: ChatItem[];
+  actions: ChatAction[];
+  chips: string[];
+  is_fallback: boolean;
+}
+
+export type ChatWelcomeMode = "welcome" | "switched" | "chosen";

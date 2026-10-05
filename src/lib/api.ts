@@ -74,6 +74,8 @@ import type {
     ApiBranch,
     ApiCategory,
     ApiMenuItem,
+    ChatReply,
+    ChatWelcomeMode,
     ContactFormPayload,
     SiteSettings,
 } from "./api-types";
@@ -139,6 +141,33 @@ export function submitContactForm(payload: ContactFormPayload): Promise<{ messag
         method: "POST",
         body: JSON.stringify(payload),
     });
+}
+
+export interface ChatMessagePayload {
+    message: string;
+    branch: string | null;
+    /** Consecutive "I didn't get that" replies so far, so the bot can escalate. */
+    fallbackStreak: number;
+}
+
+export function sendChatMessage(payload: ChatMessagePayload): Promise<ChatReply> {
+    return apiFetch<ChatReply>("/chat", {
+        method: "POST",
+        body: JSON.stringify({
+            message: payload.message,
+            branch: payload.branch,
+            fallback_streak: payload.fallbackStreak,
+        }),
+    });
+}
+
+export function getChatWelcome(
+    branch: string | null,
+    mode: ChatWelcomeMode = "welcome",
+): Promise<ChatReply> {
+    const params = new URLSearchParams({ mode });
+    if (branch) params.set("branch", branch);
+    return apiFetch<ChatReply>(`/chat/welcome?${params.toString()}`);
 }
 
 export { ApiError };

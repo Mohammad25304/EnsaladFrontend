@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
+import { ChatBot } from "../components/Chatbot";
 import { Toaster } from "../components/ui/sonner";
 import { BranchProvider } from "../hooks/use-branch";
 function NotFoundComponent() {
@@ -149,6 +150,7 @@ function RootComponent() {
           </div>
           <Footer />
         </div>
+        <ChatBot />
         <Toaster position="bottom-right" richColors />
       </BranchProvider>
     </QueryClientProvider>
