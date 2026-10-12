@@ -70,6 +70,108 @@
 
 // export { ApiError };
 
+// import type {
+//     ApiBranch,
+//     ApiCategory,
+//     ApiMenuItem,
+//     ChatReply,
+//     ChatWelcomeMode,
+//     ContactFormPayload,
+//     SiteSettings,
+// } from "./api-types";
+
+// const API_URL = import.meta.env["VITE_API_URL"] ?? "http://localhost:8000/api";
+
+// class ApiError extends Error {
+//     status: number;
+//     constructor(message: string, status: number) {
+//         super(message);
+//         this.status = status;
+//     }
+// }
+
+// async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+//     const response = await fetch(`${API_URL}${path}`, {
+//         ...options,
+//         headers: {
+//             Accept: "application/json",
+//             ...(options?.body ? { "Content-Type": "application/json" } : {}),
+//             ...options?.headers,
+//         },
+//     });
+
+//     if (!response.ok) {
+//         const body = await response.json().catch(() => null);
+//         throw new ApiError(body?.message ?? "Something went wrong", response.status);
+//     }
+
+//     return response.json();
+// }
+
+// export function getBranches(): Promise<ApiBranch[]> {
+//     return apiFetch<ApiBranch[]>("/branches");
+// }
+
+// export function getCategories(branchSlug?: string): Promise<ApiCategory[]> {
+//     const query = branchSlug ? `?branch=${encodeURIComponent(branchSlug)}` : "";
+//     return apiFetch<ApiCategory[]>(`/categories${query}`);
+// }
+
+// export interface MenuItemFilters {
+//     category?: string; // category slug
+//     tag?: string;
+//     featured?: boolean;
+// }
+
+// export function getMenuItems(branchSlug: string, filters: MenuItemFilters = {}): Promise<ApiMenuItem[]> {
+//     const params = new URLSearchParams({ branch: branchSlug });
+//     if (filters.category) params.set("category", filters.category);
+//     if (filters.tag) params.set("tag", filters.tag);
+//     if (filters.featured) params.set("featured", "1");
+
+//     return apiFetch<ApiMenuItem[]>(`/menu-items?${params.toString()}`);
+// }
+
+// export function getSiteSettings(branchSlug: string): Promise<SiteSettings> {
+//     return apiFetch<SiteSettings>(`/site-settings?branch=${encodeURIComponent(branchSlug)}`);
+// }
+
+// export function submitContactForm(payload: ContactFormPayload): Promise<{ message: string }> {
+//     return apiFetch<{ message: string }>("/contact", {
+//         method: "POST",
+//         body: JSON.stringify(payload),
+//     });
+// }
+
+// export interface ChatMessagePayload {
+//     message: string;
+//     branch: string | null;
+//     /** Consecutive "I didn't get that" replies so far, so the bot can escalate. */
+//     fallbackStreak: number;
+// }
+
+// export function sendChatMessage(payload: ChatMessagePayload): Promise<ChatReply> {
+//     return apiFetch<ChatReply>("/chat", {
+//         method: "POST",
+//         body: JSON.stringify({
+//             message: payload.message,
+//             branch: payload.branch,
+//             fallback_streak: payload.fallbackStreak,
+//         }),
+//     });
+// }
+
+// export function getChatWelcome(
+//     branch: string | null,
+//     mode: ChatWelcomeMode = "welcome",
+// ): Promise<ChatReply> {
+//     const params = new URLSearchParams({ mode });
+//     if (branch) params.set("branch", branch);
+//     return apiFetch<ChatReply>(`/chat/welcome?${params.toString()}`);
+// }
+
+// export { ApiError };
+
 import type {
     ApiBranch,
     ApiCategory,

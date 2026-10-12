@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getMenuItems } from "@/lib/api";
 import { useRequireBranch } from "@/hooks/use-branch";
+import { absoluteUrl, canonicalLinks, urlMeta } from "@/lib/seo";
 export const Route = createFileRoute("/home")({
   head: () => ({
     meta: [
@@ -18,56 +19,32 @@ export const Route = createFileRoute("/home")({
         content:
           "ENSALADA serves fresh, modern salads with seasonal ingredients and bold flavors. Explore our menu and visit us in Beirut.",
       },
-      {
-        property: "og:title",
-        content: "ENSALADA — Fresh Salads, Made Modern",
-      },
+      { property: "og:title", content: "ENSALADA — Fresh Salads, Made Modern" },
       {
         property: "og:description",
         content: "ENSALADA serves fresh, modern salads with seasonal ingredients and bold flavors.",
       },
       { property: "og:type", content: "website" },
-      {
-        property: "og:url",
-        content: "https://ensalada-modern-menu.lovable.app/",
-      },
-      {
-        property: "og:image",
-        content: "https://ensalada-modern-menu.lovable.app/images/hero-salad.jpg",
-      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "ENSALADA — Fresh Salads, Made Modern" },
       {
         name: "twitter:description",
         content: "Seasonal bowls, crisp greens, and bold dressings in the heart of Beirut.",
       },
-      {
-        name: "twitter:image",
-        content: "https://ensalada-modern-menu.lovable.app/images/hero-salad.jpg",
-      },
+      ...urlMeta("/home", "/images/hero-salad.jpg"),
     ],
-    links: [{ rel: "canonical", href: "https://ensalada-modern-menu.lovable.app/" }],
+    links: [...canonicalLinks("/home")],
     scripts: [
       {
         type: "application/ld+json",
+        // Only facts that are true for every branch. Phone, address and hours
+        // vary per branch and come from the API, so they are not hardcoded here.
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Restaurant",
           name: "ENSALADA",
           servesCuisine: "Salads",
-          url: "https://ensalada-modern-menu.lovable.app/",
-          image: "https://ensalada-modern-menu.lovable.app/images/hero-salad.jpg",
-          telephone: "+961 1 123 456",
-          email: "hello@ensalada.com",
-          priceRange: "$$",
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "123 Green Leaf Avenue",
-            addressLocality: "Beirut",
-            addressCountry: "LB",
-          },
-          openingHours: ["Mo-Fr 10:00-21:00", "Sa-Su 11:00-22:00"],
-          hasMenu: "https://ensalada-modern-menu.lovable.app/menu",
+          ...(absoluteUrl("/home") ? { url: absoluteUrl("/home") } : {}),
         }),
       },
     ],
@@ -78,7 +55,7 @@ export const Route = createFileRoute("/home")({
 function HomePage() {
   const { branchSlug, isReady } = useRequireBranch();
   const { data: settings } = useSiteSettings(branchSlug);
-  const { data: featuredItems, isLoading } = useFeaturedItems(branchSlug);
+  const { data: featuredItems, isLoading, isError } = useFeaturedItems(branchSlug);
   // Fallbacks keep the page looking correct on first load, before the
   // settings request resolves, or if a value hasn't been set yet in Filament.
   const heroBadge = settings?.hero_badge ?? "Now Open in Beirut";
@@ -145,7 +122,7 @@ function HomePage() {
           <SectionHeading
             eyebrow="Fan Favorites"
             title="Featured Menu Items"
-            description="Three bowls our guests come back for, again and again."
+            description="Bowls our guests come back for, again and again."
           />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {!isReady || isLoading
@@ -163,6 +140,16 @@ function HomePage() {
               ))
               : featuredItems?.map((item) => <MenuCard key={item.id} item={item} />)}
           </div>
+          {isReady && !isLoading && isError && (
+            <p className="mt-8 text-center text-muted-foreground">
+              We couldn't load our featured items right now. Please try again shortly.
+            </p>
+          )}
+          {isReady && !isLoading && !isError && featuredItems?.length === 0 && (
+            <p className="mt-8 text-center text-muted-foreground">
+              Featured items are coming soon — have a look at the full menu in the meantime.
+            </p>
+          )}
           <div className="mt-12 text-center">
             <Button asChild variant="outline" size="lg">
               <Link to="/menu">See Full Menu</Link>

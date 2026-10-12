@@ -43,12 +43,13 @@
 //     </Card>
 //   );
 // }
-
+/* eslint-disable prettier/prettier */
 import { Flame, BicepsFlexed } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { pickLocale, type ApiMenuItem } from "@/lib/api-types";
+import { swapToFallbackImage } from "@/lib/utils";
 
 interface MenuCardProps {
   item: ApiMenuItem;
@@ -67,6 +68,7 @@ export function MenuCard({ item }: MenuCardProps) {
           src={item.image}
           alt={name}
           loading="lazy"
+          onError={swapToFallbackImage}
           width={800}
           height={600}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"

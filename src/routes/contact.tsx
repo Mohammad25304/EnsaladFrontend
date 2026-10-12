@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { useSiteSettings, useSocialLinks, useSubmitContactForm } from "@/hooks/use-menu";
 import { ApiError } from "@/lib/api";
 import { useRequireBranch } from "@/hooks/use-branch";
+import { absoluteUrl, canonicalLinks, urlMeta } from "@/lib/seo";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -43,15 +44,15 @@ export const Route = createFileRoute("/contact")({
           "Get in touch with ENSALADA. Visit us in Beirut, call for reservations, or send a message.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://ensalada-modern-menu.lovable.app/contact" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Contact — ENSALADA" },
       {
         name: "twitter:description",
         content: "Visit ENSALADA in Beirut, call for reservations, or send us a message.",
       },
+      ...urlMeta("/contact"),
     ],
-    links: [{ rel: "canonical", href: "https://ensalada-modern-menu.lovable.app/contact" }],
+    links: [...canonicalLinks("/contact")],
     scripts: [
       {
         type: "application/ld+json",
@@ -59,7 +60,7 @@ export const Route = createFileRoute("/contact")({
           "@context": "https://schema.org",
           "@type": "ContactPage",
           name: "Contact — ENSALADA",
-          url: "https://ensalada-modern-menu.lovable.app/contact",
+          ...(absoluteUrl("/contact") ? { url: absoluteUrl("/contact") } : {}),
         }),
       },
     ],
@@ -82,15 +83,19 @@ function ContactPage() {
   const { data: settings } = useSiteSettings(branchSlug);
   const socialLinks = useSocialLinks(branchSlug);
 
-  const address = settings?.contact_address ?? "123 Green Leaf Avenue, Beirut, Lebanon";
-  const phone = settings?.contact_phone ?? "+961 1 123 456";
-  const email = settings?.contact_email ?? "hello@ensalada.com";
-  const hoursWeekday = settings?.hours_weekday ?? "Mon – Fri: 10am – 9pm";
-  const hoursWeekend = settings?.hours_weekend ?? "Sat – Sun: 11am – 10pm";
+  // No made-up fallbacks: if the admin hasn't filled a field in for this
+  // branch yet, that row is simply not shown.
+  const address = settings?.contact_address;
+  const phone = settings?.contact_phone;
+  const email = settings?.contact_email;
+  const hoursWeekday = settings?.hours_weekday;
+  const hoursWeekend = settings?.hours_weekend;
+  const hasHours = !!(hoursWeekday || hoursWeekend);
+  const hasInfo = !!(address || phone || email || hasHours);
 
   const onSubmit = async (data: ContactForm) => {
     try {
-      await submitContactForm.mutateAsync(data);
+      await submitContactForm.mutateAsync({ ...data, branch: branchSlug });
       toast.success(`Thanks, ${data.name}! We'll be in touch soon.`);
       reset();
     } catch (error) {
@@ -163,78 +168,90 @@ function ContactPage() {
 
           {/* Info */}
           <div className="space-y-8">
-            <Card className="border-border bg-card">
-              <CardContent className="grid gap-6 p-6 sm:grid-cols-2 sm:p-8">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-semibold text-foreground">Location</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">{address}</p>
-                  </div>
-                </div>
+            {hasInfo && (
+              <Card className="border-border bg-card">
+                <CardContent className="grid gap-6 p-6 sm:grid-cols-2 sm:p-8">
+                  {address && (
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <MapPin className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-semibold text-foreground">Location</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">{address}</p>
+                      </div>
+                    </div>
+                  )}
 
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Phone className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-semibold text-foreground">Phone</h3>
-                    <a
-                      href={`tel:${phone.replace(/[^+\d]/g, "")}`}
-                      className="mt-1 block text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {phone}
-                    </a>
-                  </div>
-                </div>
+                  {phone && (
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Phone className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-semibold text-foreground">Phone</h3>
+                        <a
+                          href={`tel:${phone.replace(/[^+\d]/g, "")}`}
+                          className="mt-1 block text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          {phone}
+                        </a>
+                      </div>
+                    </div>
+                  )}
 
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Mail className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-semibold text-foreground">Email</h3>
-                    <a
-                      href={`mailto:${email}`}
-                      className="mt-1 block text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {email}
-                    </a>
-                  </div>
-                </div>
+                  {email && (
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Mail className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-semibold text-foreground">Email</h3>
+                        <a
+                          href={`mailto:${email}`}
+                          className="mt-1 block text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          {email}
+                        </a>
+                      </div>
+                    </div>
+                  )}
 
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <Clock className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-semibold text-foreground">Hours</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {hoursWeekday}
-                      <br />
-                      {hoursWeekend}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  {hasHours && (
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Clock className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-semibold text-foreground">Hours</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {hoursWeekday}
+                          {hoursWeekday && hoursWeekend && <br />}
+                          {hoursWeekend}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
-            <Card className="border-border bg-card">
-              <CardContent className="p-6 sm:p-8">
-                <h3 className="font-display font-semibold text-foreground">Follow Us</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Stay updated on new bowls, seasonal specials, and behind-the-scenes from the
-                  kitchen.
-                </p>
-                <SocialLinks
-                  links={socialLinks}
-                  className="mt-5 flex gap-3"
-                  iconClassName="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary"
-                />
-              </CardContent>
-            </Card>
+            {socialLinks.length > 0 && (
+              <Card className="border-border bg-card">
+                <CardContent className="p-6 sm:p-8">
+                  <h3 className="font-display font-semibold text-foreground">Follow Us</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Stay updated on new bowls, seasonal specials, and behind-the-scenes from the
+                    kitchen.
+                  </p>
+                  <SocialLinks
+                    links={socialLinks}
+                    className="mt-5 flex gap-3"
+                    iconClassName="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary"
+                  />
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

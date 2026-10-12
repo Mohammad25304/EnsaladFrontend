@@ -30,16 +30,21 @@ interface SocialLinksProps {
     iconClassName?: string;
 }
 
-export function SocialLinks({ links, className, iconClassName }: SocialLinksProps) {
+// Only plain web links are rendered, so a bad value saved in the admin panel
+// (e.g. a "javascript:" URL) can never become a clickable link.
+const isSafeUrl = (url: string) => /^https?:\/\//i.test(url.trim());
+
+export function SocialLinks({ links: allLinks, className, iconClassName }: SocialLinksProps) {
+    const links = allLinks.filter((link) => isSafeUrl(link.url));
     if (links.length === 0) return null;
 
     return (
         <div className={className ?? "flex gap-3"}>
-            {links.map((link) => {
+            {links.map((link, index) => {
                 const Icon = PLATFORM_ICONS[link.platform] ?? LinkIcon;
                 return (
                     <a
-                        key={link.platform}
+                        key={`${link.platform}-${index}`}
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"

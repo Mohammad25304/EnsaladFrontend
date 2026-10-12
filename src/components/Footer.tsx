@@ -11,11 +11,14 @@ export function Footer() {
   const { data: settings } = useSiteSettings(branchSlug);
   const socialLinks = useSocialLinks(branchSlug);
 
-  const address = settings?.contact_address ?? "123 Green Leaf Avenue, Beirut, Lebanon";
-  const phone = settings?.contact_phone ?? "+961 1 123 456";
-  const email = settings?.contact_email ?? "hello@ensalada.com";
-  const hoursWeekday = settings?.hours_weekday ?? "Mon – Fri: 10:00 AM – 9:00 PM";
-  const hoursWeekend = settings?.hours_weekend ?? "Sat – Sun: 11:00 AM – 10:00 PM";
+  // No made-up fallbacks: a row is only shown once the admin has filled it in.
+  const address = settings?.contact_address;
+  const phone = settings?.contact_phone;
+  const email = settings?.contact_email;
+  const hoursWeekday = settings?.hours_weekday;
+  const hoursWeekend = settings?.hours_weekend;
+  const hasHours = !!(hoursWeekday || hoursWeekend);
+  const hasContact = !!(address || phone || email);
 
   return (
     <footer className="border-t border-border bg-secondary/40">
@@ -38,51 +41,64 @@ export function Footer() {
           </div>
 
           {/* Hours */}
-          <div>
-            <h4 className="font-display text-base font-semibold text-foreground">Hours</h4>
-            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-start gap-3">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>{hoursWeekday}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>{hoursWeekend}</span>
-              </li>
-            </ul>
-          </div>
+          {hasHours && (
+            <div>
+              <h4 className="font-display text-base font-semibold text-foreground">Hours</h4>
+              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+                {[hoursWeekday, hoursWeekend].map(
+                  (line) =>
+                    line && (
+                      <li key={line} className="flex items-start gap-3">
+                        <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <span>{line}</span>
+                      </li>
+                    ),
+                )}
+              </ul>
+            </div>
+          )}
 
           {/* Contact */}
-          <div>
-            <h4 className="font-display text-base font-semibold text-foreground">Contact</h4>
-            <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span>{address}</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-4 w-4 shrink-0 text-primary" />
-                <a
-                  href={`tel:${phone.replace(/[^+\d]/g, "")}`}
-                  className="transition-colors hover:text-foreground"
-                >
-                  {phone}
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-4 w-4 shrink-0 text-primary" />
-                <a href={`mailto:${email}`} className="transition-colors hover:text-foreground">
-                  {email}
-                </a>
-              </li>
-            </ul>
-          </div>
+          {hasContact && (
+            <div>
+              <h4 className="font-display text-base font-semibold text-foreground">Contact</h4>
+              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+                {address && (
+                  <li className="flex items-start gap-3">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{address}</span>
+                  </li>
+                )}
+                {phone && (
+                  <li className="flex items-center gap-3">
+                    <Phone className="h-4 w-4 shrink-0 text-primary" />
+                    <a
+                      href={`tel:${phone.replace(/[^+\d]/g, "")}`}
+                      className="transition-colors hover:text-foreground"
+                    >
+                      {phone}
+                    </a>
+                  </li>
+                )}
+                {email && (
+                  <li className="flex items-center gap-3">
+                    <Mail className="h-4 w-4 shrink-0 text-primary" />
+                    <a href={`mailto:${email}`} className="transition-colors hover:text-foreground">
+                      {email}
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
 
           {/* Social */}
-          <div>
-            <h4 className="font-display text-base font-semibold text-foreground">Follow Us</h4>
-            <SocialLinks links={socialLinks} className="mt-4 flex gap-3" />
-          </div>
+          {socialLinks.length > 0 && (
+            <div>
+              <h4 className="font-display text-base font-semibold text-foreground">Follow Us</h4>
+              <SocialLinks links={socialLinks} className="mt-4 flex gap-3" />
+            </div>
+          )}
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-sm text-muted-foreground sm:flex-row">

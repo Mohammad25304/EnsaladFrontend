@@ -37,7 +37,7 @@ export function useSiteSettings(branchSlug: string | null | undefined) {
     queryKey: ["site-settings", branchSlug],
     queryFn: () => getSiteSettings(branchSlug as string),
     enabled: !!branchSlug,
-    staleTime: 10 * 60 * 1000,
+    staleTime: 60 * 1000, // 1 minute — admins edit these, so keep them fresh
   });
 }
 
@@ -46,8 +46,8 @@ export function useSiteSettings(branchSlug: string | null | undefined) {
  * site_settings value is stored as plain text) — this parses it into a
  * usable array, falling back to [] if it's missing or malformed.
  */
-export function useSocialLinks(branchSlug: string | null | undefined): SocialLink[][] {
-  const { data: settings } = useSiteSettings();
+export function useSocialLinks(branchSlug: string | null | undefined): SocialLink[] {
+  const { data: settings } = useSiteSettings(branchSlug);
 
   if (!settings?.social_links) return [];
 
