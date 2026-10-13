@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BicepsFlexed, Flame, MessageCircle, Salad, SendHorizontal, X } from "lucide-react";
+import { BicepsFlexed, Droplet, Flame, MessageCircle, Salad, SendHorizontal, Wheat, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -95,13 +95,25 @@ function ItemCard({ item }: { item: ChatItem }) {
                     {item.calories != null && (
                         <span className="flex items-center gap-1">
                             <Flame className="h-3 w-3 text-primary" />
-                            {item.calories} cal
+                            {item.calories} kcal
                         </span>
                     )}
                     {item.protein_grams != null && (
                         <span className="flex items-center gap-1">
                             <BicepsFlexed className="h-3 w-3 text-primary" />
                             {item.protein_grams}g
+                        </span>
+                    )}
+                    {item.fats_grams != null && (
+                        <span className="flex items-center gap-1">
+                            <Droplet className="h-3 w-3 text-primary" />
+                            {item.fats_grams}g fats
+                        </span>
+                    )}
+                    {item.carbs_grams != null && (
+                        <span className="flex items-center gap-1">
+                            <Wheat className="h-3 w-3 text-primary" />
+                            {item.carbs_grams}g carbs
                         </span>
                     )}
                     {item.tags.slice(0, 2).map((tag) => (

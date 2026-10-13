@@ -44,13 +44,12 @@
 //   );
 // }
 /* eslint-disable prettier/prettier */
-import { Flame, BicepsFlexed } from "lucide-react";
+import { Flame, BicepsFlexed, Droplet, Wheat } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { pickLocale, type ApiMenuItem } from "@/lib/api-types";
 import { swapToFallbackImage } from "@/lib/utils";
-
 interface MenuCardProps {
   item: ApiMenuItem;
 }
@@ -59,7 +58,11 @@ export function MenuCard({ item }: MenuCardProps) {
   const name = pickLocale(item.name);
   const description = pickLocale(item.description);
   const price = Number(item.price).toFixed(2);
-  const hasNutrition = item.calories != null || item.protein_grams != null;
+  const hasNutrition =
+    item.calories != null ||
+    item.protein_grams != null ||
+    item.fats_grams != null ||
+    item.carbs_grams != null;
 
   return (
     <Card className="group overflow-hidden border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -90,13 +93,25 @@ export function MenuCard({ item }: MenuCardProps) {
             {item.calories != null && (
               <span className="flex items-center gap-1.5">
                 <Flame className="h-3.5 w-3.5 text-primary" />
-                {item.calories} cal
+                {item.calories} kcal
               </span>
             )}
             {item.protein_grams != null && (
               <span className="flex items-center gap-1.5">
                 <BicepsFlexed className="h-3.5 w-3.5 text-primary" />
                 {item.protein_grams}g protein
+              </span>
+            )}
+            {item.fats_grams != null && (
+              <span className="flex items-center gap-1.5">
+                <Droplet className="h-3.5 w-3.5 text-primary" />
+                {item.fats_grams}g fats
+              </span>
+            )}
+            {item.carbs_grams != null && (
+              <span className="flex items-center gap-1.5">
+                <Wheat className="h-3.5 w-3.5 text-primary" />
+                {item.carbs_grams}g carbs
               </span>
             )}
           </div>
