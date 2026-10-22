@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BicepsFlexed, Droplet, Flame, MessageCircle, Salad, SendHorizontal, Wheat, X } from "lucide-react";
+import { BicepsFlexed, Flame, MessageCircle, Salad, SendHorizontal, Wheat, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -104,12 +104,7 @@ function ItemCard({ item }: { item: ChatItem }) {
                             {item.protein_grams}g
                         </span>
                     )}
-                    {item.fats_grams != null && (
-                        <span className="flex items-center gap-1">
-                            <Droplet className="h-3 w-3 text-primary" />
-                            {item.fats_grams}g fats
-                        </span>
-                    )}
+
                     {item.carbs_grams != null && (
                         <span className="flex items-center gap-1">
                             <Wheat className="h-3 w-3 text-primary" />
@@ -396,9 +391,7 @@ export function ChatBot() {
                     className="fixed bottom-24 right-4 z-50 flex h-[min(34rem,calc(100dvh-7.5rem))] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-2xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-200"
                 >
                     <header className="flex items-center gap-3 bg-primary px-4 py-3.5 text-primary-foreground">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15">
-                            <Salad className="h-5 w-5" />
-                        </div>
+                        <img src="EnSalada Sage Green Logo.png" alt="Ensalada logo" className="h-10 w-10 shrink-0 rounded-full bg-primary-foreground/15 object-cover" />
                         <div className="min-w-0 flex-1">
                             <p className="font-display text-lg font-semibold leading-tight">ENSALADA</p>
                             <p className="truncate text-xs text-primary-foreground/80">{subtitle}</p>

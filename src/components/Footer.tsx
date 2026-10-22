@@ -27,9 +27,11 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/home" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                <Salad className="h-5 w-5" />
-              </div>
+              <img
+                src="EnSalada Sage Green Logo.png"
+                alt="Ensalada logo"
+                className="h-9 w-9 shrink-0 rounded-full object-cover"
+              />
               <span className="font-display text-xl font-semibold tracking-tight text-foreground">
                 ENSALADA
               </span>

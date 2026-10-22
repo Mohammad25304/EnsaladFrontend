@@ -183,8 +183,6 @@ export interface ApiMenuItem {
   /** grams */
   protein_grams: number | null;
   /** grams */
-  fats_grams: number | null;
-  /** grams */
   carbs_grams: number | null;
   sort_order: number;
   tags: ApiTag[];
@@ -221,7 +219,7 @@ export type ChatAction =
 /** The slimmed-down dish the chat card needs. */
 export type ChatItem = Pick<
   ApiMenuItem,
-  "id" | "name" | "description" | "price" | "image" | "calories" | "protein_grams" | "fats_grams" | "carbs_grams" | "is_featured" | "tags"
+  "id" | "name" | "description" | "price" | "image" | "calories" | "protein_grams" | "carbs_grams" | "is_featured" | "tags"
 >;
 
 export interface ChatReply {

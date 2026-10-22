@@ -44,7 +44,7 @@
 //   );
 // }
 /* eslint-disable prettier/prettier */
-import { Flame, BicepsFlexed, Droplet, Wheat } from "lucide-react";
+import { Flame, BicepsFlexed, Wheat } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,7 +61,6 @@ export function MenuCard({ item }: MenuCardProps) {
   const hasNutrition =
     item.calories != null ||
     item.protein_grams != null ||
-    item.fats_grams != null ||
     item.carbs_grams != null;
 
   return (
@@ -87,7 +86,6 @@ export function MenuCard({ item }: MenuCardProps) {
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
           {description}
         </p>
-
         {hasNutrition && (
           <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-medium text-muted-foreground">
             {item.calories != null && (
@@ -100,12 +98,6 @@ export function MenuCard({ item }: MenuCardProps) {
               <span className="flex items-center gap-1.5">
                 <BicepsFlexed className="h-3.5 w-3.5 text-primary" />
                 {item.protein_grams}g protein
-              </span>
-            )}
-            {item.fats_grams != null && (
-              <span className="flex items-center gap-1.5">
-                <Droplet className="h-3.5 w-3.5 text-primary" />
-                {item.fats_grams}g fats
               </span>
             )}
             {item.carbs_grams != null && (

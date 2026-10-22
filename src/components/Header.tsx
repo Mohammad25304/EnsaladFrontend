@@ -80,9 +80,11 @@ export function Header() {
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/home" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <Salad className="h-5 w-5" />
-          </div>
+          <img
+            src="EnSalada Sage Green Logo.png"
+            alt="Ensalada logo"
+            className="h-9 w-9 shrink-0 rounded-full object-cover"
+          />
           <span className="font-display text-xl font-semibold tracking-tight text-foreground">
             ENSALADA
           </span>
@@ -108,9 +110,7 @@ export function Header() {
               </Link>
             );
           })}
-          <Button asChild size="sm" className="ml-2">
-            <Link to="/menu">Order Now</Link>
-          </Button>
+
           <BranchSwitcher />
         </nav>
 
@@ -146,11 +146,7 @@ export function Header() {
                   </SheetClose>
                 ))}
               </nav>
-              <div className="mt-auto pb-4">
-                <Button asChild className="w-full">
-                  <Link to="/menu">Order Now</Link>
-                </Button>
-              </div>
+
             </div>
           </SheetContent>
         </Sheet>

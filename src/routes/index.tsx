@@ -87,9 +87,7 @@ function BranchesPage() {
                         >
                             <Card className="h-full border-border bg-card transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/40 group-hover:shadow-xl">
                                 <CardContent className="p-8">
-                                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
-                                        <Salad className="h-7 w-7" />
-                                    </div>
+                                    <img src="EnSalada Sage Green Logo.png" alt="Ensalada logo" className="h-14 w-14 shrink-0 rounded-full object-cover" />
 
                                     <h3 className="mt-5 font-display text-2xl font-semibold text-foreground">
                                         {branch.name.en}
