@@ -68,8 +68,7 @@ export function Footer() {
                 {address && (
                   <li className="flex items-start gap-3">
                     <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    <span>{address}</span>
-                  </li>
+                    <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:underline">{address}</a>                  </li>
                 )}
                 {phone && (
                   <li className="flex items-center gap-3">
@@ -117,4 +116,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+} 

@@ -178,8 +178,7 @@ function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-display font-semibold text-foreground">Location</h3>
-                        <p className="mt-1 text-sm text-muted-foreground">{address}</p>
-                      </div>
+                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:underline">{address}</a>                      </div>
                     </div>
                   )}
 

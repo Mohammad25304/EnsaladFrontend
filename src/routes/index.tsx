@@ -2,12 +2,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { ArrowRight, MapPin, Salad } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 
 import { SectionHeading } from "@/components/SectionHeading";
 import { Card, CardContent } from "@/components/ui/card";
 import { getBranches } from "@/lib/api";
 import { useBranch } from "@/hooks/use-branch";
+import { branchMapUrl } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
     validateSearch: (search: Record<string, unknown>) => ({
@@ -78,38 +79,67 @@ function BranchesPage() {
                 )}
 
                 <div className="mt-12 grid gap-6 sm:grid-cols-2">
-                    {branches?.map((branch) => (
-                        <button
-                            key={branch.id}
-                            type="button"
-                            onClick={() => choose(branch.slug)}
-                            className="group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-3xl"
-                        >
-                            <Card className="h-full border-border bg-card transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/40 group-hover:shadow-xl">
-                                <CardContent className="p-8">
-                                    <img src="EnSalada Sage Green Logo.png" alt="Ensalada logo" className="h-14 w-14 shrink-0 rounded-full object-cover" />
+                    {branches?.map((branch) => {
+                        const mapUrl = branchMapUrl(branch);
 
-                                    <h3 className="mt-5 font-display text-2xl font-semibold text-foreground">
-                                        {branch.name.en}
-                                    </h3>
+                        return (
+                            <div
+                                key={branch.id}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => choose(branch.slug)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        choose(branch.slug);
+                                    }
+                                }}
+                                className="group cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-3xl"
+                            >
+                                <Card className="h-full border-border bg-card transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/40 group-hover:shadow-xl">
+                                    <CardContent className="p-8">
+                                        <img
+                                            src="/EnSalada Sage Green Logo.png"
+                                            alt="Ensalada logo"
+                                            className="h-14 w-14 shrink-0 rounded-full object-cover"
+                                        />
 
-                                    {branch.address && (
-                                        <p className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
-                                            <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                                            {branch.address}
-                                        </p>
-                                    )}
+                                        <h3 className="mt-5 font-display text-2xl font-semibold text-foreground">
+                                            {mapUrl ? (
+                                                <a
+                                                    href={mapUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    onKeyDown={(e) => e.stopPropagation()}
+                                                    className="inline-flex items-center gap-2 hover:text-primary hover:underline"
+                                                >
+                                                    {branch.name.en}
+                                                    <MapPin className="h-5 w-5 shrink-0" />
+                                                </a>
+                                            ) : (
+                                                branch.name.en
+                                            )}
+                                        </h3>
 
-                                    <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                                        Select this branch
-                                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                                    </span>
-                                </CardContent>
-                            </Card>
-                        </button>
-                    ))}
+                                        {branch.address && (
+                                            <p className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
+                                                <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                                                {branch.address}
+                                            </p>
+                                        )}
+
+                                        <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+                                            Select this branch
+                                            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                                        </span>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </main>
     );
-}
+} 
