@@ -15,3 +15,11 @@ export function swapToFallbackImage(e: { currentTarget: HTMLImageElement }) {
     img.src = FALLBACK_IMAGE;
   }
 }
+
+
+export function branchMapUrl(b: { map_url?: string | null; address?: string | null }) {
+  if (b.map_url) return b.map_url;
+  if (b.address)
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.address)}`;
+  return null;
+}
